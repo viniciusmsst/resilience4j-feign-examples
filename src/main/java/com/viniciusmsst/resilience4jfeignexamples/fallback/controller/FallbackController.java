@@ -1,7 +1,8 @@
 package com.viniciusmsst.resilience4jfeignexamples.fallback.controller;
 
-import com.viniciusmsst.resilience4jfeignexamples.fallback.PokeApiClient;
+import com.viniciusmsst.resilience4jfeignexamples.fallback.client.pokeapi.PokeApiClient;
 import com.viniciusmsst.resilience4jfeignexamples.fallback.entity.Pokemon;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +20,12 @@ public class FallbackController {
     }
 
     @GetMapping(path = "/{name}")
-    public Pokemon findPokemonByName(@PathVariable("name") String name) {
-        Optional<Pokemon> pokemon = pokeApiClient.findPokemonByName(name, "xpto");
+    public ResponseEntity<Pokemon> findPokemonByName(@PathVariable("name") String name) {
+        Optional<Pokemon> pokemon = pokeApiClient.findPokemonByName(name);
         if (pokemon.isPresent()) {
-            return pokemon.get();
+            return ResponseEntity.ok(pokemon.get());
         } else {
-            return new Pokemon();
+            return ResponseEntity.badRequest().body(new Pokemon());
         }
     }
 
